@@ -47,7 +47,9 @@ before(async () => {
 it("solves the challenge", async function () {
 
   // implement solution here
-
+  let pwnFactory = await ethers.getContractFactory('SafuVaultExploiter');
+  let pwner = await pwnFactory.connect(attacker).deploy(safuStrategy.address, await attacker.getAddress());
+  
 });
 
 /// expected final state

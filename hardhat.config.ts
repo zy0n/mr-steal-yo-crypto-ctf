@@ -2,6 +2,10 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
+  gasReporter: {
+    currency: "USD",
+    enabled: true,
+  },
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true 

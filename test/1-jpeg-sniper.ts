@@ -11,7 +11,7 @@ let o1: Signer;
 let o2: Signer;
 let admin: Signer; // should not be used
 let flatLaunchpeg: Contract; 
-let startBlock: Number;
+let startBlock: number;
 
 /// preliminary state
 before(async () => {
@@ -29,6 +29,9 @@ before(async () => {
 it("solves the challenge", async function () {
 
   // implement solution here
+  let pwnFactory = await ethers.getContractFactory('LaunchpegExploiter');
+  const pwner = await pwnFactory.connect(attacker).deploy(flatLaunchpeg.address, await attacker.getAddress());
+  
 
 });
 
