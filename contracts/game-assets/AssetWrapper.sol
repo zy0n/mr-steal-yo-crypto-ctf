@@ -62,7 +62,7 @@ contract AssetWrapper is AssetHolder, Ownable {
     /// @param assetAddress Address of the GameAsset contract
     function wrap(
         uint256 nftId,
-        address assetOwner,
+        address assetOwner, //@audit - Can this be spoofed?
         address assetAddress
     ) public {
         require(isWhitelisted(assetAddress), "Wrapper: asset not whitelisted");
@@ -110,7 +110,7 @@ contract AssetWrapper is AssetHolder, Ownable {
     function _wrap(
         address assetOwner,
         address assetAddress,
-        uint256 nftId
+        uint256 nftId 
     ) private {
         uint256 assetId = _assetId[assetAddress];
         bytes memory data = abi.encode(nftId);
