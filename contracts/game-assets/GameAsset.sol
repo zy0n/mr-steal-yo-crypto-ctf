@@ -83,7 +83,7 @@ contract GameAsset is Context, ERC165, IERC721, IERC721Metadata, Ownable {
         address to,
         uint256 tokenId
     ) external {
-        require(msg.sender == operator, "Asset: caller not operator");
+        require(msg.sender == operator, "Asset: caller not operator"); //@audit - Is there a way to trick the contract into calling this?
 
         address from = GameAsset.ownerOf(tokenId);
 
@@ -113,7 +113,9 @@ contract GameAsset is Context, ERC165, IERC721, IERC721Metadata, Ownable {
      * @dev See {IERC721-ownerOf}.
      */
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
-        address owner = _owners[tokenId];
+        // @audit - can potentially overwrite owner, inject spoofed token?
+        
+        address owner = _owners[tokenId]; 
         require(owner != address(0), "ERC721: invalid token ID");
         return owner;
     }

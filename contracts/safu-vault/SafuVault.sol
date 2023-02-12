@@ -116,6 +116,7 @@ contract SafuVault is ERC20, Ownable, ReentrancyGuard {
         strategy.beforeDeposit();
 
         uint256 _pool = balance();
+        //@audit Can be spoofed.
         IERC20(token).safeTransferFrom(msg.sender, address(this), _amount);
         earn();
         uint256 _after = balance();

