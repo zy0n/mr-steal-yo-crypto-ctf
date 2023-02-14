@@ -34,7 +34,7 @@
   },
   "scripts": {
     "toolbox": "docker run -it --rm -v $PWD:/home/ethsec/data trailofbits/eth-security-toolbox",
-    "ztest": "forge test --match-path",
+    "runtest": "npx hardhat test",
     "installforge": "curl -L https://foundry.paradigm.xyz | bash"
   }
 }

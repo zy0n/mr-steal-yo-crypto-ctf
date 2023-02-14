@@ -61,7 +61,7 @@ contract SafuMakerV2 is Ownable {
     }
 
     /// @dev converts single pair into SAFU token for xSAFU holders
-    function convert(address token0, address token1) external onlyEOA {
+    function convert(address token0, address token1) external onlyEOA { // @audit this kills reentrancy?
         _convert(token0, token1);
     }
 
@@ -97,7 +97,7 @@ contract SafuMakerV2 is Ownable {
         uint256 amount0 = IERC20(token0).balanceOf(address(this));
         uint256 amount1 = IERC20(token1).balanceOf(address(this));
 
-        _convertStep(token0, token1, amount0, amount1);
+        _convertStep(token0, token1, amount0, amount1); // @audit attack vector in here. 
     }
 
     /// @dev converts all tokens to SAFU token
@@ -107,7 +107,7 @@ contract SafuMakerV2 is Ownable {
         uint256 amount0,
         uint256 amount1
     ) internal returns (uint256 safuOut) {
-        if (token0 == token1) {
+        if (token0 == token1) { // @audit if both tokens the same, 
             uint256 amount = amount0 + (amount1);
             if (token0 == safu) {
                 IERC20(safu).safeTransfer(bar, amount);
@@ -115,19 +115,19 @@ contract SafuMakerV2 is Ownable {
             } else if (token0 == usdc) {
                 safuOut = _toSafu(usdc, amount);
             } else {
-                address bridge = bridgeFor(token0);
+                address bridge = bridgeFor(token0); // @audit token0 attack in the bridge?
                 amount = _swap(token0, bridge, amount, address(this));
                 safuOut = _convertStep(bridge, bridge, amount, 0); // recursive
             }
 
-        } else if (token0 == safu) {
+        } else if (token0 == safu) { // @audit no checks here against other token
             IERC20(safu).safeTransfer(bar, amount0);
             safuOut = _toSafu(token1, amount1) + (amount0);
         } else if (token1 == safu) {
             IERC20(safu).safeTransfer(bar, amount1);
             safuOut = _toSafu(token0, amount0) + (amount1);
 
-        } else if (token0 == usdc) {
+        } else if (token0 == usdc) { // @audit no checks here against other token
             safuOut = _toSafu(usdc, _swap(token1, usdc, amount1, address(this)) + (amount0));
         } else if (token1 == usdc) {
             safuOut = _toSafu(usdc, _swap(token0, usdc, amount0, address(this)) + (amount1));
@@ -162,7 +162,7 @@ contract SafuMakerV2 is Ownable {
 
         (uint256 reserve0, uint256 reserve1, ) = pair.getReserves();
 
-        IERC20(fromToken).safeTransfer(address(pair), amountIn);
+        IERC20(fromToken).safeTransfer(address(pair), amountIn); // @audit fromToken reentrancy?
 
         // Added in case fromToken is a reflect token.
         if (fromToken == pair.token0()) {
