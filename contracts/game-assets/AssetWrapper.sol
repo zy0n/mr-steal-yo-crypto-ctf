@@ -66,15 +66,16 @@ contract AssetWrapper is AssetHolder, Ownable {
         address assetAddress
     ) public {
         require(isWhitelisted(assetAddress), "Wrapper: asset not whitelisted");
-        _wrap(assetOwner, assetAddress, nftId);
+        _wrap(assetOwner, assetAddress, nftId); //@audit - this mints before checks complete. Able to renter here!!
 
         IGameAsset asset = IGameAsset(assetAddress);
-        address owner = asset.ownerOf(nftId);
+        address owner = asset.ownerOf(nftId); //@audit can alter owner here? its shadowed.
 
         // can be removed to allow wrapping to any account, saving gas on transfer
         require(assetOwner == owner, "Wrapper: incorrect receiver for wrap");
 
         require(
+            //@audit -Can't directly be spoofed but maybe a reentrancy here?
             owner == msg.sender ||
                 isApprovedForAll(owner, msg.sender) || // approval for all WLed contracts
                 asset.isApprovedForAll(owner, msg.sender), // approval for this WL contract
