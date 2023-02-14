@@ -33,6 +33,8 @@
     "typescript": ">=4.5.0"
   },
   "scripts": {
-    "toolbox": "docker run -it --rm -v $PWD:/home/ethsec/data trailofbits/eth-security-toolbox"
+    "toolbox": "docker run -it --rm -v $PWD:/home/ethsec/data trailofbits/eth-security-toolbox",
+    "ztest": "forge test --match-path",
+    "installforge": "curl -L https://foundry.paradigm.xyz | bash"
   }
 }

