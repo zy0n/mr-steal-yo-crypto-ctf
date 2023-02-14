@@ -77,13 +77,13 @@ contract SafuMakerV2 is Ownable {
     /// @dev returns the bridging token to perform swaps between other tokens
     function bridgeFor(address token) public view returns (address bridge) {
         bridge = _bridges[token];
-        if (bridge == address(0)) {
+        if (bridge == address(0)) {  
             bridge = usdc;
         }
     }
 
     /// @dev converts a single trading pair's rewards into SAFU token
-    function _convert(address token0, address token1) internal {
+    function _convert(address token0, address token1) internal { //@audit this can be abused. 
         ISafuPair pair = ISafuPair(factory.getPair(token0, token1));
 
         require(address(pair) != address(0), "SafuMakerV2: Invalid pair");

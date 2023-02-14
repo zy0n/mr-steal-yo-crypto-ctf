@@ -87,6 +87,9 @@ before(async () => {
 it("solves the challenge", async function () {
 
   // implement solution here
+  // first thoughts
+  // simple goal here, create new token, add Liquidity 
+  // convert rentrant token & pwn contract with MiM router action maybe???
 
 });
 
