@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+import "hardhat/console.sol";
 
 /// @dev represents single instance of a game asset as an ERC721
 /// @dev only contract owner can mint game assets for a user
@@ -116,6 +117,7 @@ contract GameAsset is Context, ERC165, IERC721, IERC721Metadata, Ownable {
         // @audit - can potentially overwrite owner, inject spoofed token?
         
         address owner = _owners[tokenId]; 
+        console.log(tokenId);
         require(owner != address(0), "ERC721: invalid token ID");
         return owner;
     }

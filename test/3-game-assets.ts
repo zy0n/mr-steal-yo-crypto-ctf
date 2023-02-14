@@ -54,8 +54,8 @@ it("solves the challenge", async function () {
 
   let pwnFactory = await ethers.getContractFactory('GameAssetExploiter')
   let pwner = await pwnFactory.connect(attacker).deploy(assetWrapper.address)
-  await pwner.connect(attacker).pwn(swordAsset.address, 1)
-  await pwner.connect(attacker).pwn(shieldAsset.address, 1)
+  await pwner.connect(attacker).pwn(swordAsset.address, 0) // lol its id 0, not 1. 
+  await pwner.connect(attacker).pwn(shieldAsset.address, 0)
 
 
 
