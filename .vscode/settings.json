@@ -1,3 +1,7 @@
 {
-  "inline-bookmarks.view.showVisibleFilesOnly": true
+  "inline-bookmarks.view.showVisibleFilesOnly": true,
+  "solidity-va.debug.parser.showExceptions": false,
+  "solidity-va.tools.surya.option.negModifiers": true,
+  "solidity-va.preview.markdown": true,
+  "solidity-va.diagnostics.cdili_json.import": true
 }
