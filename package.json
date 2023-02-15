@@ -34,6 +34,8 @@
   },
   "scripts": {
     "toolbox": "docker run -it --rm -v $PWD:/home/ethsec/data trailofbits/eth-security-toolbox",
+    "solaudit": "doAudit() { slither $1 --exclude dead-code,naming-convention,external-function,low-level-calls,solc-version, --solc-remaps '@openzeppelin=/Users/shawnbarto/Documents/GitHub/mr-steal-yo-crypto-ctf/node_modules/@openzeppelin' --exclude-dependencies  --checklist > $1_Audit.md; }; doAudit",
+    "fullaudit": "doAudit() { slither $1 --solc-remaps '@openzeppelin=/Users/shawnbarto/Documents/GitHub/mr-steal-yo-crypto-ctf/node_modules/@openzeppelin' --exclude-dependencies  --checklist > $1_Audit-Full.md; }; doAudit",
     "runtest": "npx hardhat test",
     "installforge": "curl -L https://foundry.paradigm.xyz | bash"
   }

