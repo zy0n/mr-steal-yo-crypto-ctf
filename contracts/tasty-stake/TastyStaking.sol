@@ -245,7 +245,7 @@ contract TastyStaking is Ownable {
       * @param oldStaking The old staking contract funds are being migrated from.
       * @param amount The amount to migrate - generally this would be the staker's balance
       */
-    function migrateStake(address oldStaking, uint256 amount) external {
+    function migrateStake(address oldStaking, uint256 amount) external { // @audit unprotected external with no checks; mints unchecked
         TastyStaking(oldStaking).migrateWithdraw(msg.sender, amount);
         _applyStake(msg.sender, amount);
     }

