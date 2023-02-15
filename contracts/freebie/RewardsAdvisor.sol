@@ -57,7 +57,7 @@ contract RewardsAdvisor {
         }
 
         if (isContract(from)) {
-            require(IAdvisor(from).owner() == msg.sender); // admin
+            require(IAdvisor(from).owner() == msg.sender); // admin @audit incorrect check here for owner, is external call and not this contract explicitly.
             IAdvisor(from).delegatedTransferERC20(address(farm), address(this), farmDeposit);
         } else {
             require(from == msg.sender); // user
